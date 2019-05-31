@@ -123,11 +123,14 @@ class Events_model extends CI_Model
 	 */
 	public function getDailyEvents($date)
 	{
-		$startDate = new DateTimeImmutable($date);
+		$startDate = new DateTime($date);
+		$formattedDate = $startDate->format('Y-m-d');
 
-		return $this->db->from('events')->where([
-			'event_start >=' => $startDate->format($this->date_format),
-			'event_start <=' => $startDate->format($this->date_format)
-		])->order_by('event_start asc')->row_array();
+		$this->db->from('sessions')->where([
+			'start_time >=' => $formattedDate . ' 00:00:00',
+			'start_time <=' => $formattedDate . ' 23:59:59'
+		])->order_by('start_time asc')
+			->join('events', 'events.id = sessions.event_id');
+		return $this->db->get()->result_array();
 	}
 }
