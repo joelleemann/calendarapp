@@ -15,13 +15,17 @@ class Calendar extends CI_Controller
 
 	public function index()
 	{
-		//in case we don't have a date passed, we can just set as the current day
-		$startDate = !empty($this->input->get('start_date')) ? $this->input->get('start_date') : date('Y-m-d');
+		$startDate = $this->input->get('start_date');
+		if (empty($startDate)) {//in case we don't have a date passed, we can just set as the current day
+			$startDate = date('Y-m-d');
+		}
+
 		$data = [
 			'events' => $this->events_model->getWeeklyEvents($startDate),
 			'previousWeekStart' => $this->events_model->getPreviousWeekStart($startDate),
 			'nextWeekStart' => $this->events_model->getNextWeekStart($startDate),
 		];
+
 		$this->load->view('calendar', $data);
 	}
 }

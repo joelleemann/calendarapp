@@ -2,8 +2,6 @@
 
 class Events_model extends CI_Model
 {
-	private $date_format = 'Y-m-d H:i:s';
-
 	/**
 	 * Initialize the database
 	 * Events_model constructor.
@@ -26,9 +24,9 @@ class Events_model extends CI_Model
 		$startDate = $this->getWeekStartDate($startDate);
 
 		$weekStart = new DateTime($startDate);
-		$weekStart = $weekStart->format($this->date_format);
+		$weekStart = $weekStart->format('Y-m-d H:i:s');
 		$weekEnd = new DateTime($startDate);
-		$weekEnd = $weekEnd->add(new DateInterval('P7D'))->format($this->date_format);
+		$weekEnd = $weekEnd->add(new DateInterval('P7D'))->format('Y-m-d H:i:s');
 		$this->db->from('sessions')->where([
 				'start_time >=' => $weekStart,
 				'start_time <=' => $weekEnd
@@ -105,11 +103,23 @@ class Events_model extends CI_Model
 		return $weekStart->format('Y-m-d');
 	}
 
+	/**
+	 * Get the previous weeks starting date (sunday)
+	 * @param $start
+	 * @return string
+	 * @throws Exception
+	 */
 	public function getPreviousWeekStart($start) : string
 	{
 		return date('Y-m-d', strtotime($this->getWeekStartDate($start) . ' - 7 days'));
 	}
 
+	/**
+	 * Get the following weeks starting date (sunday)
+	 * @param $start
+	 * @return string
+	 * @throws Exception
+	 */
 	public function getNextWeekStart($start) : string
 	{
 		return date('Y-m-d', strtotime($this->getWeekStartDate($start) . ' + 7 days'));
